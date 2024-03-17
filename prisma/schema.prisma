@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,163 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model all_table {
+  id                                    Int                 @id @default(autoincrement())
+  type                                  Int
+  max_roll                              Int?
+  min_roll                              Int?
+  source                                String              @db.VarChar(10)
+  category                              Int
+  name                                  String              @db.VarChar(255)
+  category_all_table_categoryTocategory category            @relation("all_table_categoryTocategory", fields: [category], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_all_table_category")
+  source_all_table_sourceTosource       source              @relation("all_table_sourceTosource", fields: [source], references: [abbreviation], onDelete: NoAction, onUpdate: NoAction, map: "fk_all_table_source")
+  table_type                            table_type          @relation(fields: [type], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_all_table_type")
+  check                                 check[]
+  check_type                            check_type[]
+  condition                             condition[]
+  condition_set                         condition_set[]
+  keyword                               keyword[]
+  modifier                              modifier[]
+  range                                 range[]
+  range_to_check                        range_to_check[]
+  range_to_modifier                     range_to_modifier[]
+  simple_lookup                         simple_lookup[]
+}
+
+model category {
+  id                                     Int         @id @default(autoincrement())
+  name                                   String      @db.VarChar(255)
+  all_table_all_table_categoryTocategory all_table[] @relation("all_table_categoryTocategory")
+}
+
+model check {
+  id                                               Int              @id @default(autoincrement())
+  table                                            Int
+  condition                                        Int?
+  condition_set                                    Int?
+  type                                             Int
+  name                                             String           @db.VarChar(255)
+  dc                                               Int
+  condition_check_conditionTocondition             condition?       @relation("check_conditionTocondition", fields: [condition], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_check_condition")
+  condition_set_check_condition_setTocondition_set condition_set?   @relation("check_condition_setTocondition_set", fields: [condition_set], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_check_condition_set")
+  all_table                                        all_table        @relation(fields: [table], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_check_table")
+  check_type                                       check_type       @relation(fields: [type], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_check_type")
+  range_to_check_range_to_check_checkTocheck       range_to_check[] @relation("range_to_check_checkTocheck")
+}
+
+model check_type {
+  id        Int       @id @default(autoincrement())
+  table     Int
+  name      String    @db.VarChar(255)
+  check     check[]
+  all_table all_table @relation(fields: [table], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_check_type_table")
+}
+
+model condition {
+  id                                                   Int             @id @default(autoincrement())
+  table                                                Int
+  type                                                 String          @db.VarChar(255)
+  condition                                            String          @db.VarChar(255)
+  check_check_conditionTocondition                     check[]         @relation("check_conditionTocondition")
+  all_table                                            all_table       @relation(fields: [table], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_condition_table")
+  condition_set_condition_set_condition_oneTocondition condition_set[] @relation("condition_set_condition_oneTocondition")
+  condition_set_condition_set_condition_twoTocondition condition_set[] @relation("condition_set_condition_twoTocondition")
+  range_range_conditionTocondition                     range[]         @relation("range_conditionTocondition")
+  simple_lookup_simple_lookup_conditionTocondition     simple_lookup[] @relation("simple_lookup_conditionTocondition")
+}
+
+model condition_set {
+  id                                                       Int             @id @default(autoincrement())
+  table                                                    Int
+  condition_one                                            Int
+  condition_two                                            Int
+  check_check_condition_setTocondition_set                 check[]         @relation("check_condition_setTocondition_set")
+  condition_condition_set_condition_oneTocondition         condition       @relation("condition_set_condition_oneTocondition", fields: [condition_one], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_condition_set_condition_one")
+  condition_condition_set_condition_twoTocondition         condition       @relation("condition_set_condition_twoTocondition", fields: [condition_two], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_condition_set_condition_two")
+  all_table                                                all_table       @relation(fields: [table], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_condition_set_table")
+  range_range_condition_setTocondition_set                 range[]         @relation("range_condition_setTocondition_set")
+  simple_lookup_simple_lookup_condition_setTocondition_set simple_lookup[] @relation("simple_lookup_condition_setTocondition_set")
+}
+
+model keyword {
+  id        Int        @id @default(autoincrement())
+  roll      Int?
+  table     Int?
+  keyword   String?    @db.VarChar(255)
+  all_table all_table? @relation(fields: [table], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_keyword_table")
+
+  @@index([table], map: "fki_fk_keyword_table")
+}
+
+model modifier {
+  id                                                     Int                 @id @default(autoincrement())
+  table                                                  Int
+  name                                                   String              @db.VarChar(255)
+  modifier                                               Int
+  all_table                                              all_table           @relation(fields: [table], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_modifier_table")
+  range_to_modifier_range_to_modifier_modifierTomodifier range_to_modifier[] @relation("range_to_modifier_modifierTomodifier")
+}
+
+model range {
+  id                                               Int                 @id @default(autoincrement())
+  table                                            Int
+  min                                              Int
+  max                                              Int
+  condition                                        Int?
+  condition_set                                    Int?
+  result                                           String              @db.VarChar(255)
+  result_details                                   String?             @db.VarChar(255)
+  condition_range_conditionTocondition             condition?          @relation("range_conditionTocondition", fields: [condition], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_range_condition")
+  condition_set_range_condition_setTocondition_set condition_set?      @relation("range_condition_setTocondition_set", fields: [condition_set], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_range_condition_set")
+  all_table                                        all_table           @relation(fields: [table], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_range_table")
+  range_to_check_range_to_check_rangeTorange       range_to_check[]    @relation("range_to_check_rangeTorange")
+  range_to_modifier_range_to_modifier_rangeTorange range_to_modifier[] @relation("range_to_modifier_rangeTorange")
+}
+
+model range_to_check {
+  id                                Int       @id @default(autoincrement())
+  table                             Int
+  range                             Int
+  check                             Int
+  check_range_to_check_checkTocheck check     @relation("range_to_check_checkTocheck", fields: [check], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_range_to_check_check")
+  range_range_to_check_rangeTorange range     @relation("range_to_check_rangeTorange", fields: [range], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_range_to_check_range")
+  all_table                         all_table @relation(fields: [table], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_range_to_check_table")
+}
+
+model range_to_modifier {
+  id                                            Int       @id @default(autoincrement())
+  table                                         Int
+  range                                         Int
+  modifier                                      Int
+  modifier_range_to_modifier_modifierTomodifier modifier  @relation("range_to_modifier_modifierTomodifier", fields: [modifier], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_range_to_mod_modifier")
+  range_range_to_modifier_rangeTorange          range     @relation("range_to_modifier_rangeTorange", fields: [range], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_range_to_mod_range")
+  all_table                                     all_table @relation(fields: [table], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_range_to_mod_table")
+}
+
+model simple_lookup {
+  id                                                       Int            @id @default(autoincrement())
+  table                                                    Int
+  condition                                                Int?
+  condition_set                                            Int?
+  result                                                   String         @db.VarChar(255)
+  result_definition                                        String?        @db.VarChar(255)
+  condition_simple_lookup_conditionTocondition             condition?     @relation("simple_lookup_conditionTocondition", fields: [condition], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_simple_lookup_condition")
+  condition_set_simple_lookup_condition_setTocondition_set condition_set? @relation("simple_lookup_condition_setTocondition_set", fields: [condition_set], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_simple_lookup_condition_set")
+  all_table                                                all_table      @relation(fields: [table], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_simple_lookup_table")
+}
+
+model source {
+  abbreviation                       String      @id @db.VarChar(10)
+  name                               String      @db.VarChar(255)
+  attribution                        String      @db.VarChar(255)
+  url                                String      @db.VarChar(1000)
+  all_table_all_table_sourceTosource all_table[] @relation("all_table_sourceTosource")
+}
+
+model table_type {
+  id        Int         @id @default(autoincrement())
+  name      String      @db.VarChar(255)
+  all_table all_table[]
 }
