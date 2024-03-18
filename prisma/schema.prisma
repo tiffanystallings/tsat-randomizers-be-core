@@ -111,6 +111,7 @@ model range {
   max                                              Int
   condition                                        Int?
   condition_set                                    Int?
+  natural                                          Boolean?            @default(false)
   result                                           String              @db.VarChar(255)
   result_details                                   String?             @db.VarChar(255)
   condition_range_conditionTocondition             condition?          @relation("range_conditionTocondition", fields: [condition], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_range_condition")
