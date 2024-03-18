@@ -1,12 +1,14 @@
 import { Controller, Get, Param } from "@nestjs/common";
 import { KeywordsService } from "./keywords.service";
-import { keyword as KeywordModel } from "@prisma/client";
+import { keyword as KeywordModel, all_table as TableModel } from "@prisma/client";
+import { TablesService } from "./tables.service";
 
 enum TYPE { NOUN=2, VERB=1 }
 
 @Controller('keywords')
 export class KeywordsController {
-    constructor(private readonly keywordsService: KeywordsService) {}
+    constructor(private readonly keywordsService: KeywordsService,
+                private readonly tablesService: TablesService) {}
 
     @Get(':type/:roll')
     async rollKeywordByType(@Param('type') table: string,
@@ -18,16 +20,18 @@ export class KeywordsController {
     async rollMultipleKeyword(@Param('type') table: string,
                               @Param('quantity') quantity: string): Promise<KeywordModel[]> {
         const rollTotal: number = Number(quantity);
+        
+        return this.tablesService.getTableById({ id: Number(table) }).then((rollTable: TableModel) => {
+            const min = Math.ceil(rollTable.min_roll);
+            const max = Math.floor(rollTable.max_roll);
 
-        const min = Math.ceil(1);
-        const max = Math.floor(100);
-        let rolls: number[] = [];
+            let rolls: number[] = [];
 
-        for (let i: number = 0; i < rollTotal; i++) {
-            rolls.push(Math.floor((Math.random() * max) + min));
-        }
-
-        console.log(rolls);
-        return this.keywordsService.keywordMany({ table: Number(table), roll: rolls});
+            for (let i: number = 0; i < rollTotal; i++) {
+                rolls.push(Math.floor((Math.random() * max) + min));
+            }
+    
+            return this.keywordsService.keywordMany({ table: Number(table), roll: rolls});
+        });
     }
 }
