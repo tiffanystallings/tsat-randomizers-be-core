@@ -6,12 +6,21 @@ import { range } from "@prisma/client";
 export class RangesService {
     constructor(private prisma: PrismaService) {}
 
-    async getTableResultByRoll(params: {table: number, roll: number, natural?: boolean}) {
+    async getTableResultByRoll(params: {table: number, roll: number, natural?: boolean}): Promise<range | null> {
         const {table, roll, natural} = params;
-
+        console.log(params);
         return this.prisma.range.findFirst({
             where: {
-                
+                natural: natural || false,
+                table,
+                AND: {
+                    min: {
+                        lte: roll
+                    },
+                    max: {
+                        gte: roll
+                    }
+                }
             }
         })
     }

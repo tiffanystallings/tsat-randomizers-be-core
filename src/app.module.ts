@@ -6,18 +6,22 @@ import { KeywordsController } from './controllers/keywords.controller';
 import { PrismaService } from './services/prisma.service';
 import { TablesService } from './services/tables.service';
 import { CoreUtils } from './utils/core.util';
+import { OracleController } from './controllers/oracle.controller';
+import { RangesService } from './services/ranges.service';
 
 @Module({
   imports: [],
   controllers: [
     AppController, 
-    KeywordsController
+    KeywordsController,
+    OracleController
   ],
   providers: [
     AppService, 
     KeywordsService, 
     PrismaService, 
-    TablesService, 
+    TablesService,
+    RangesService,
     CoreUtils
   ],
 })
