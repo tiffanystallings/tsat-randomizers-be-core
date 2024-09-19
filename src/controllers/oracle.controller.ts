@@ -1,5 +1,5 @@
 import { Controller, Get, HttpException, HttpStatus, Param } from "@nestjs/common";
-import { all_table } from "src/generated/client";
+import { all_table } from "@prisma/client";
 import { RangesService } from "src/services/ranges.service";
 import { TablesService } from "src/services/tables.service";
 import { CoreUtils } from "src/utils/core.util";
